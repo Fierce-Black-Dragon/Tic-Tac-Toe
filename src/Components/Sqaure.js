@@ -1,11 +1,16 @@
 import React from 'react'
 
-const Sqaure = ({value, squareClick}) => {
+const Sqaure = ({value, squareClick,isWinning}) => {
   return (
-    <button  type="button" className="square"
-    onClick={squareClick}>
-      {value}
-    </button>
+    <button
+    type="button"
+    onClick={squareClick}
+    className={`square ${isWinning? 'winning' : ''} ${
+      value === 'X' ? 'text-green' : 'text-orange'
+    }`}
+  >
+    {value}
+  </button>
   )
 }
 
