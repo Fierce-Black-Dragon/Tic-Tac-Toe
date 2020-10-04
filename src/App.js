@@ -1,38 +1,47 @@
 /* eslint-disable no-use-before-define */
 import React, {useState} from 'react';
 import Board from './Components/Board';
+import History from './Components/History';
 import { calculateWinner } from './Helper';
 
 import "./Styles/root.scss"
 
 const App = () =>{
-    const [board,setBoard]=useState(Array(9).fill(null));
-    const [isXNext ,setIsXNext]=useState(false);
+    const [history,setHistoy]=useState([{board:Array(9).fill(null),isXNext:true}]);
+    const [currentMove ,setCurrentMOve]=useState(0);
+    const current = history[currentMove];
+ 
     const handeClick=(position)=>{
-        if(board[position] || winner ){
+        if(current.board[position] || winner ){
             return;
         }
-        setBoard(prev=>{
-               return prev.map((Sqaure, pos)=>{
+       setHistoy(prev=>{
+           const last = prev[prev.length -1];
+
+            const newboard =last.board.map((Sqaure, pos)=>{
                    if(pos === position){
-                       return  isXNext ? 'X' : 'O';
+                       return  last.isXNext ? 'X' : 'O';
                    }
                    return Sqaure;
                });
-               
+               return prev.concat({board :newboard ,isXNext :!last.isXNext});
            });
-        setIsXNext( (prev) => !prev );
+        setCurrentMOve(prev  => prev +1)
     };
-    const winner= calculateWinner(board);
+    const winner= calculateWinner(current.board);
    
-    const messager = winner? `The match is won by ${winner}`: `The next player is ${isXNext ? 'X':'O'}`
+    const messager = winner? `The winner is ${winner}`: `The next player is ${current.isXNext ? 'X':'O'}`;
+    const moveTo =(move) =>{
+        setCurrentMOve(move);
+    }
  return(
 
   <div className='app'>
   
   <p>TIC TAC TOE</p>
   <h4>{messager}</h4>
-  <Board board={board} handeClick={handeClick}/>
+  <Board board={current.board} handeClick={handeClick}/>
+  <History history={history}  moveTo={moveTo} currentmove={currentMove}/>
  </div>
  );
 
